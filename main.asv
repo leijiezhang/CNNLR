@@ -1,0 +1,37 @@
+load('result.mat');
+g_16=result.global_16;%16 bits of global feature
+g_24=result.global_24;%24 bits of global feature
+g_32=result.global_32;%32 bits of global feature
+local_fea=result.local;%local feature
+local_fea_all=result.local_fea_all;
+local_all=zeros(384,169);
+for i=1:384
+    local_all(i,:)=reshape(local_fea_all(:,:,i),1,169);
+end
+result1=[];
+result1.global_16=result.global_16;
+result1.global_24=result.global_24;
+result1.global_32=result.global_32;
+result1.global_all=result.global_all;
+result1.local=result.local;
+result1.local_all=local_all;
+result=result1;
+
+dim_rdc=32;
+% get the responses of local feature
+% options_w=[];
+% options_w.NeighborMode = 'Supervised';
+% options_w.k = 5;
+% options_w.bLDA=1;
+% options_w.gnd = gnd_Train;
+%  W = constructW(fea_Train,options_w);
+ W = constructW(fea_Train);
+ 
+ Y = Eigenmap(W,dim_rdc);
+ %  set the options of SR algorithm
+ options_sr=[];
+ 
+ options_sr.ReguAlpha = 0.01;
+ options_sr.ReguType = 'Ridge';
+ options_sr.W = W;
+ [eigvector] = SR(options_sr,Y,fea_Train);
